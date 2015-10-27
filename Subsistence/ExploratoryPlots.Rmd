@@ -9,8 +9,8 @@ This is some basic code to aggregate and plot the subsistence harvest data in va
 
 ```{r}
 library(ggplot2)
-#setwd("/users/kristinmarshall/google drive/KM work/NCEAS/PortfolioSubsistence")
-setwd("c:/users/kristin.marshall/new folder/google drive/KM work/NCEAS/PortfolioSubsistence")
+setwd("/users/kristinmarshall/google drive/KM work/NCEAS/PortfolioSubsistence")
+#setwd("c:/users/kristin.marshall/new folder/google drive/KM work/NCEAS/PortfolioSubsistence")
 
 #setwd("/users/kristin/google drive/KM work/NCEAS/PortfolioSubsistence")
 ```
@@ -86,6 +86,23 @@ First, let's plot the number of communities sampled by year.  Each panel represe
 ggplot(x2, aes(year)) +
   geom_bar(stat="bin", binwidth=.3) +
   facet_wrap(~subregcd, ncol=3)
+```
+
+Trying to do some mixed effects models
+```{r}
+library(lme4)
+
+##repreat this with total population
+##x2 is the 
+glm1=lmer(percap~oil.period+subregcd + (1|commname), dat=x2)
+
+#for ()
+
+##convert this 
+##subdat is the dataframe with all of the data 
+
+
+
 ```
 
 
@@ -167,7 +184,7 @@ example_NMDS=metaMDS(dat.comdat, k=2)
 stressplot(example_NMDS)
 plot(example_NMDS)
 ```
-
+#
 This plots the NMDS output with hulls by region
 ```{r, fig.width=7}
 ordiplot(example_NMDS,type="n", xlim=c(-1,1), ylim=c(-1,1))
