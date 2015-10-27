@@ -1,0 +1,229 @@
+---
+title: "Exploratory Plots for Subsistence Data"
+author: "Kristin Marshall"
+date: "October 21, 2015"
+output: word_document
+---
+
+This is some basic code to aggregate and plot the subsistence harvest data in various ways.  Here, I'm focusing on the percap field as the response. 
+
+```{r}
+library(ggplot2)
+#setwd("/users/kristinmarshall/google drive/KM work/NCEAS/PortfolioSubsistence")
+setwd("c:/users/kristin.marshall/new folder/google drive/KM work/NCEAS/PortfolioSubsistence")
+
+#setwd("/users/kristin/google drive/KM work/NCEAS/PortfolioSubsistence")
+```
+
+Run Anne's filtering code to create a data-frame with the appropriate studies
+
+```{r}
+all.data<-read.csv("CSIS_Original.csv")
+proj.list<-read.csv("CSIS_ProjectList.csv")
+
+#Add samp.type and spp.type columns to all.data
+all.data<-merge(all.data,proj.list,by="comm_yr_id")
+all.data<-all.data[,-c(43)]
+
+#Select only samp.type not equal to "OPP" and spp.type equal to "A"
+select.data<-all.data[!all.data$samp.type=="OPP" & all.data$spp.type=="A",]
+
+#Select taxa
+select.data$rescode.top<-as.numeric(substr(select.data$rescode,3,4))
+select.data$rescode.bottom<-as.numeric(substr(select.data$rescode,5,9))
+	select.data$rescode.top[is.na(select.data$rescode.top)]=0
+	select.data$rescode.bottom[is.na(select.data$rescode.bottom)]=0
+select.data<-select.data[select.data$rescode.top>0 & select.data$rescode.bottom==0,]
+
+subdat=select.data
+
+write.csv(subdat,'CSIS_data_filtered.csv')
+```
+
+
+fix a weird formatting thing with two PWS-named regions by eliminating one of them
+```{r}
+subdat$subregcd[subdat$subregcd=="PWS"]="PWS     "
+```
+
+Add oil spill time periods to data-set-- these are arbitrary right now, could be changed later
+
+```{r}
+subdat$oil.period=NA
+subdat$oil.period[subdat$year<1989]="Pre-spill"
+subdat$oil.period[subdat$year==1989]="Spill"
+subdat$oil.period[subdat$year>1989 & subdat$year<1994]="Short-Post"
+subdat$oil.period[subdat$year>1993]="Long-Post"
+
+```
+
+Categorize each region as affected or not (only SE AK regions are unaffected here)
+
+```{r}
+subdat$oil.region="Affected"
+subdat$oil.region[subdat$subregcd=="GLF     "]="Unaffected"
+subdat$oil.region[subdat$subregcd=="JUN     "]="Unaffected"
+subdat$oil.region[subdat$subregcd=="KET     "]="Unaffected"
+```
+
+The field we want to use as our response is "percap".  But we should re-calculate it just because there were some weird rounding errors in the spreadsheet we got from ADFG. Percap=xtotlbs/CommPop
+
+```{r}
+subdat$percap=as.numeric(subdat$xtotlbs)/as.numeric(subdat$commpop)
+```
+
+Aggregate percap by summing to the community level by year.  This will sum across all the different "prey" items.  
+  
+```{r}
+x2=aggregate(subdat$percap, by=list(subdat$year, subdat$commname, subdat$subregcd,factor(subdat$oil.period), factor(subdat$oil.region)), na.rm=T, FUN=sum)
+names(x2)=c("year","commname","subregcd","oil.period","oil.region","percap")
+
+```
+
+First, let's plot the number of communities sampled by year.  Each panel represents a different region.
+
+```{r, fig.width=7}
+ggplot(x2, aes(year)) +
+  geom_bar(stat="bin", binwidth=.3) +
+  facet_wrap(~subregcd, ncol=3)
+```
+
+
+Next, let's plot per capita lbs harvested by year and region in a boxplot.  Individual communities make up the data within the boxes. This plot got me thinking about whether there was an oil spill effect on "total harvest". In PWS, 1987 and 1988 were high harvest years, and 1989 and 1990 were low.  Other regions don't have the same intensity of sampling in those years, so it's hard to make much of anything.
+```{r,fig.width=7}
+ggplot(x2, aes(factor(year),(percap))) +
+  stat_boxplot() +
+  facet_wrap(~subregcd, ncol=3)  
+```  
+
+
+To think about this a little bit more, I created the new fields that describe pre and post spill periods and the oiled and unoiled regions (above) .  This is a coarse way to look at the data, but it looks like the pre-spill period may have had higher harvest in the affected regions.  Looks like no change from pre- to post-spill in the unaffected regions. Also- percap is clearly lognormally distributed, plot the logs here to better see the means.
+
+```{r,fig.width=7}  
+ggplot(x2, aes(factor(oil.period, c("Pre-spill","Spill","Short-Post","Long-Post")),log(percap))) +
+  stat_boxplot() +
+  facet_wrap(~oil.region)  
+```
+
+
+Next, let's think about the compositional data-- what are the species that are being harvested?  First, aggregate to resource code level to find top 20 spp that are harvested overall.
+
+```{r}
+x.spec=aggregate(subdat$percap, by=list(subdat$rescode, subdat$resource), FUN=sum)
+names(x.spec)=c('rescode', 'resource','percap')
+x.spec.sort=order(x.spec$percap, decreasing=T)
+
+x.spec=x.spec[x.spec.sort,]
+x.spec$prpercap=x.spec$percap/sum(x.spec$percap, na.rm=T)
+x.spec$cumpercap=cumsum(x.spec$prpercap)
+
+x.spec[1:20,]
+spcodes=x.spec$rescode[1:20]
+```
+
+
+
+Now let's try a stacked bar chart with only these top 20 groups
+
+```{r,fig.width=7, fig.height=9}
+x3=aggregate(subdat$percap, by=list(subdat$year, subdat$subregcd, subdat$resource, subdat$rescode), na.rm=T, FUN=sum)
+names(x3)=c("year","subregcd","resource","rescode","percap")
+
+
+ind.sp=which(x3$rescode %in% spcodes)
+
+##lump everyting that isn't the top 20 spp into "other" category
+x3$res20="other"
+x3$res20[ind.sp]=as.character(x3$resource[ind.sp])
+
+ggplot(x3, aes(year,percap, fill=res20))  +
+  geom_bar(stat="identity", position="stack") +
+  facet_wrap(~subregcd, ncol=3)
+```  
+
+Now, to prep the data for some of the multivariate analyses, we need a data frame that has community, year, sub-region, and then all the "prey" types going across the rows.
+
+```{r}
+x4=aggregate(subdat$percap, by=list(subdat$year, subdat$commname, subdat$subregcd, subdat$resource, subdat$oil.period), na.rm=T, FUN=sum)
+names(x4)=c("year", "commname","subregcd","resource","oil.period","percap")
+
+##average across oil spill periods by community
+x5=aggregate(x4$percap, by=list(x4$oil.period, x4$commname, x4$subregcd, x4$resource), na.rm=T, FUN=mean)
+names(x5)=c('oil.period','commname','subregcd','resource','percap.mean')
+
+x5$oil.comm=paste(x5$commname,x5$oil.period, separate="")
+
+comdat=reshape(x5,v.names="percap.mean", idvar=c("oil.comm","subregcd"), timevar="resource",direction="wide")
+```
+
+THis is a messy first stab at NMDS.
+```{r,fig.width=7}
+dat.comdat=comdat[,5:126]
+dat.comdat[is.na(dat.comdat)]=0
+row.names(dat.comdat)=comdat$oil.comm
+
+library(vegan)
+example_NMDS=metaMDS(dat.comdat, k=2)
+stressplot(example_NMDS)
+plot(example_NMDS)
+```
+
+This plots the NMDS output with hulls by region
+```{r, fig.width=7}
+ordiplot(example_NMDS,type="n", xlim=c(-1,1), ylim=c(-1,1))
+ordihull(example_NMDS,groups=comdat$subregcd,draw="polygon",col="grey90",label=T)
+```
+
+Similarly, plot hulls by oil spill period
+
+```{r, fig.width=7}
+ordiplot(example_NMDS,type="n", xlim=c(-1,1), ylim=c(-1,1))
+
+periods=c("Pre-spill","Spill", "Short-Post", "Long-Post")
+
+for (i in 1:4){
+  this.period=periods[i]
+ordihull(example_NMDS$points[which(comdat$oil.period==this.period),],groups=comdat$oil.period[which(comdat$oil.period==this.period)],draw="polygon",col=i,label=T)
+
+}
+
+
+```
+
+Now make plots of each region separately
+```{r, fig.width=7}
+MDSout=cbind(comdat[,1:4],example_NMDS$points)
+
+
+y=list()
+
+for (i in 1:length(levels(MDSout$subregcd))){
+  this.reg=levels(MDSout$subregcd)[i]
+  reg.ind=which(MDSout$subregcd==this.reg)
+  MDS.reg=MDSout[reg.ind,]  
+  y[[i]]=ggplot(MDS.reg, aes(MDS1,MDS2))+
+   geom_point(aes(color=commname, shape=oil.period)) +
+    ggtitle(this.reg)
+}
+
+print(y)
+
+#pdf("plots.pdf", onefile = TRUE)
+#print(y)
+#dev.off()
+
+```
+
+Do some cluster diagrams
+```{r, fig.width=7}
+
+d = (1 - vegdist(dat.comdat, method="bray")) * 100
+ h=hclust(d)
+ 
+ plot(h, main = "Clustering CommSpill using Bray Curtis method", sub = "", xlab="", axes = FALSE, hang =-1, labels=paste(comdat$oil.period,comdat$subregcd, sep=""), cex=0.5)
+ 
+lines(x = c(0,0), y = c(0,100), type = "n") # force extension of y axis
+axis(side = 2, at = seq(0,100,10), labels = seq(100,0,-10))
+```
+
+***
