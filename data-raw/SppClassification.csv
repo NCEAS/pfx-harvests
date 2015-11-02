@@ -1,0 +1,123 @@
+resource,taxonomic.grp,habitat.captured
+Crane,bird,unknown habitat
+Ducks,bird,unknown habitat
+Geese,bird,unknown habitat
+Owl,bird,non-marine
+Seabirds & Loons,bird,marine
+Shorebirds,bird,marine
+Swan,bird,non-marine
+Unknown Other Birds,bird,unknown habitat
+Upland Game Birds,bird,non-marine
+Crane Eggs,bird,unknown habitat
+Duck Eggs,bird,unknown habitat
+Geese Eggs,bird,unknown habitat
+Seabird & Loon Eggs,bird,marine
+Shorebird Eggs,bird,marine
+Swan Eggs,bird,non-marine
+Unknown Eggs,bird,unknown habitat
+Upland Game Bird Eggs,bird,non-marine
+Beaver,land mammal,non-marine
+Bison,land mammal,non-marine
+Black Bear,land mammal,non-marine
+Brown Bear,land mammal,non-marine
+Caribou,land mammal,non-marine
+Cattle - Feral,land mammal,non-marine
+Coyote,land mammal,non-marine
+Dall Sheep,land mammal,non-marine
+Deer,land mammal,non-marine
+Elk,land mammal,non-marine
+Fox,land mammal,non-marine
+Goat,land mammal,non-marine
+Hare,land mammal,non-marine
+Land Otter,land mammal,non-marine
+Lynx,land mammal,non-marine
+Marmot,land mammal,non-marine
+Marten,land mammal,non-marine
+Mink,land mammal,non-marine
+Moose,land mammal,non-marine
+Muskox,land mammal,non-marine
+Muskrat,land mammal,non-marine
+Porcupine,land mammal,non-marine
+Rabbit - Feral,land mammal,non-marine
+Reindeer - Feral,land mammal,non-marine
+Squirrel,land mammal,non-marine
+Unknown Large Land Mammal,land mammal,non-marine
+Unknown Small Land Mammals/Furbearers,land mammal,non-marine
+Weasel,land mammal,non-marine
+Wolf,land mammal,non-marine
+Wolverine,land mammal,non-marine
+Seaweed/Kelp,marine algae,marine
+Abalone,marine invertebrate,marine
+"Chitons (bidarkis, gumboots)",marine invertebrate,marine
+Clams,marine invertebrate,marine
+Cockles,marine invertebrate,marine
+Crabs,marine invertebrate,marine
+Geoducks,marine invertebrate,marine
+Jingles,marine invertebrate,marine
+Limpets,marine invertebrate,marine
+Mussels,marine invertebrate,marine
+Octopus,marine invertebrate,marine
+Oyster,marine invertebrate,marine
+Scallops,marine invertebrate,marine
+Sea Cucumber,marine invertebrate,marine
+Sea Urchin,marine invertebrate,marine
+Shrimp,marine invertebrate,marine
+Snails,marine invertebrate,marine
+Squid,marine invertebrate,marine
+Starfish,marine invertebrate,marine
+Unknown Marine Invertebrates,marine invertebrate,marine
+Whelk,marine invertebrate,marine
+Porpoise,marine mammal,marine
+Sea Otter,marine mammal,marine
+Seal,marine mammal,marine
+Steller Sea Lion,marine mammal,marine
+Unknown Marine Mammals,marine mammal,marine
+Walrus,marine mammal,marine
+Whale,marine mammal,marine
+Bass,non-salmon fish,unknown habitat
+Blackfish,non-salmon fish,non-marine
+Blenny,non-salmon fish,unknown habitat
+Burbot,non-salmon fish,non-marine
+Char,non-salmon fish,marine
+Cod,non-salmon fish,marine
+Eel,non-salmon fish,unknown habitat
+Flounder,non-salmon fish,marine
+Grayling,non-salmon fish,unknown habitat
+Greenling,non-salmon fish,marine
+Halibut,non-salmon fish,marine
+Herring,non-salmon fish,marine
+Herring Roe,non-salmon fish,marine
+Lamprey,non-salmon fish,unknown habitat
+Perch,non-salmon fish,unknown habitat
+Pike,non-salmon fish,non-marine
+Prowfish,non-salmon fish,marine
+Rockfish,non-salmon fish,marine
+Sablefish (black cod),non-salmon fish,marine
+Sculpin,non-salmon fish,unknown habitat
+Shark,non-salmon fish,marine
+Sheefish,non-salmon fish,non-marine
+Skates,non-salmon fish,marine
+Smelt,non-salmon fish,unknown habitat
+Sole,non-salmon fish,marine
+Stickleback (needlefish),non-salmon fish,unknown habitat
+Sturgeon,non-salmon fish,unknown habitat
+Sucker,non-salmon fish,unknown habitat
+Trout,non-salmon fish,unknown habitat
+Tuna/Mackerel,non-salmon fish,marine
+Unknown Non-Salmon Fish,non-salmon fish,unknown habitat
+Whitefish,non-salmon fish,non-marine
+Wolffish,non-salmon fish,marine
+Wrymouth,non-salmon fish,marine
+Coal,other,non-marine
+Spawnouts,other,non-marine
+Chinook Salmon,salmon,marine
+Chum Salmon,salmon,marine
+Coho Salmon,salmon,marine
+Landlocked Salmon,salmon,non-marine
+Pink Salmon,salmon,marine
+Salmon Roe,salmon,marine
+Sockeye Salmon,salmon,marine
+Unknown Salmon,salmon,marine
+Berries,terrestrial plant,non-marine
+Plants/Greens/Mushrooms,terrestrial plant,non-marine
+Wood,terrestrial plant,non-marine
