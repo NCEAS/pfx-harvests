@@ -24,5 +24,6 @@ if (file.exists("data-raw/CSIS_Original.csv")) {
   select.data$percap_recalc<-select.data$xtotlbs_recalc/as.numeric(as.character(select.data$commpop))
   
   #Export file
-  saveRDS(select.data, "data-generated/SelectData.rds") 
+  saveRDS(select.data, "data-generated/SelectData.rds")
+  readr::write_csv(select.data, "data-generated/SelectData.csv")
 }
